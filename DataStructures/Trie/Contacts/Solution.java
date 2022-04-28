@@ -47,7 +47,7 @@ class Trie {
         String tail = partial.substring(1);
         if(!trie.containsKey(head)) 
             return 0;
-        return trie.get(head).count(partial.substring(1));
+        return trie.get(head).count(tail);
     }
 }
 
