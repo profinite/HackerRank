@@ -25,6 +25,8 @@ class Result {
         final int n = basis.get(0).size();
         Cell[][] affine = new Cell[m][n];
         final int ringLevels = Math.min(m, n) / 2;
+        
+        // Parse the grid into rings
         for (int i = 0; i < ringLevels; i++) {
             Ring next = new Ring(i, basis, affine);
             int width = m - i - 1;
@@ -36,7 +38,7 @@ class Result {
     }
     
     /* Simulate a given ring of the matrix, tagging each corner. 
-     * Being very deliberate here, to head off bugs. */
+     * Being very deliberate here, to preclude bugs. */
     static void addRing(Ring ring, int m, int n) {
         final Point NW = new Point(ring.level, ring.level);
         final Point SW = new Point(ring.level, m);
@@ -150,9 +152,7 @@ public class Solution {
                 throw new RuntimeException(ex);
             }
         });
-
         Result.matrixRotation(matrix, r);
-
         bufferedReader.close();
     }
 }
