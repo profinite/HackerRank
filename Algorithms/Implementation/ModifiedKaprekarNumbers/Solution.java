@@ -8,10 +8,9 @@ class Result {
     /*
      * Find all the Kaprekar numbers in a given range of integers.
      *
-     * Kaprekars are integers whose square can form numerals which sum
-     * to the original integer.
+     * Kaprekars are integers whose square can form numeral digits 
+     * which sum to the original integer.
      * 
-     * Begin by enumerating all integers in the range
      */
 
     public static void kaprekarNumbers(int p, int q) {
