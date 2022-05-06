@@ -17,27 +17,15 @@ class Result {
     * For elegance, here we create a frequency map of the sequence for 0(n log n).
     * then compare to an inner class for tracking deltas.
     */
-    public static int beautifulTriplets(final int diff, final List<Integer> arr) {
-        final Map<Integer, Long> histogram = frequencyMap(arr);
-        long count = histogram
+    public static long beautifulTriplets(int diff, List<Integer> arr) {
+        final Map<Integer, Long> sequence = frequencyMap(arr);
+        return sequence
                 .keySet()
                 .stream()
-                .mapToLong(i->countTriplet(histogram, 
-                    new Result()
-                    .new Triplet(i, diff)))
+                .map(l -> new Result().new Triplet(l, diff, sequence))
+                .filter(Triplet::isPresent)
+                .mapToLong(Triplet::count)
                 .reduce(0, Long::sum);
-                
-        System.out.println("Found: " + count + " triplets.");
-        return Math.toIntExact(count);
-    }
-
-    private static long countTriplet(final Map<Integer, Long> histogram, Triplet beauty) {
-        if(beauty.terms().allMatch(histogram::containsKey)) {
-            return beauty.terms()
-                .mapToLong(histogram::get)
-                .reduce(1, Math::multiplyExact);
-        }
-        return 0;
     }
 
     /* NOTE: Must use LinkedHashMap to preserve ordering. */
@@ -55,7 +43,9 @@ class Result {
         final int base;
         final int subtrahend;
         final int minuend;
-        public Triplet(int base, int diff) {
+        final Map<Integer, Long> sequence;       
+        public Triplet(int base, int diff, Map<Integer, Long> seq) {
+            this.sequence = seq;           
             this.base = base;
             this.subtrahend = diff + base;
             this.minuend = 2 * diff + base;
@@ -63,6 +53,14 @@ class Result {
         public Stream<Integer> terms() {
             return Stream.of(base, subtrahend, minuend);
         }
+        public boolean isPresent() {
+            return terms().allMatch(sequence::containsKey);
+        }
+        public long count() {
+            return terms()
+                .mapToLong(sequence::get)
+                .reduce(1, Math::multiplyExact);
+        } 
     }
 }
 
@@ -78,7 +76,7 @@ public class Solution {
         List<Integer> arr = Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
             .map(Integer::parseInt)
             .collect(toList());
-        int result = Result.beautifulTriplets(d, arr);
+        long result = Result.beautifulTriplets(d, arr);
         bufferedWriter.write(String.valueOf(result));
         bufferedWriter.newLine();
         bufferedReader.close();
