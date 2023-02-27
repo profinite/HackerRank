@@ -43,7 +43,7 @@ class Result {
     /* Compute the board distance for this Knight, via BFS */
     private static Integer distanceOf(Knight k) {
         final Point destination = new Point(k.n - 1, k.n - 1);
-        final Point origin  = new Point(new Point(0, 0));
+        final Point origin  = new Point(0, 0);
         Deque<Point> queue = new ArrayDeque<>(List.of(origin));
         Set<Point> alreadyVisited = new HashSet<>(List.of(origin));
         k.atlas.put(origin, 0);
