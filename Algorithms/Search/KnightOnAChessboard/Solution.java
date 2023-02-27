@@ -12,16 +12,18 @@ class Result {
      * Compute minimal distance for a knight making L-shaped moves.
      *
      * Notes: Essentially a mere implementation problem, but we can
-     * store identical states (homologs) and parallelize the search.
+     * parallelize the search, and store identical states (homologs).
      *
      * Uses a reductive design for potential concurrency gains,
-     * especially with newer Java runtimes on server hardware.
-     * (remove .parallel otherwise)
+     * backed by a Red-Black Tree of dependencies (ConcurrentHashMap).
+     * (remove .parallel for sequential hardware)
      *
-     * 𝚯(n log n) runtime, given unlimited threads and neighbor reducing enabled.
-     * Otherwise, 𝚯(n * n).
+     * 𝚯(N) runtime for each Knight, given N = board size (n * n).
      *
-     * 𝚯(n) space complexity.
+     * Total runtime 𝚯(N log N) with unlimited processors and neighbor reducing,
+     * otherwise 𝚯(knights * searches) = 𝚯(n * N) = 𝚯(n³).
+     *
+     * 𝚯(N) space complexity for each search
      */
     static Map<Set<Integer>, Integer> memo = new ConcurrentHashMap<>();
     public static List<List<Integer>> knightOnAChessboard(int n) {
@@ -33,20 +35,18 @@ class Result {
             .boxed().toList()).toList();
     }
 
-    /* Store homologs of this Knight for dynamic programming. */
+    /* Store mirrors of this Knight for simple dynamic programming. */
     private static Integer memoize(Knight k) {
         return memo.merge(k.homolog(), distanceOf(k), (a, b) -> a);
     }
 
     /* Compute the board distance for this Knight, via BFS */
     private static Integer distanceOf(Knight k) {
-        Set<Point> alreadyVisited = new HashSet<>();
         final Point destination = new Point(k.n - 1, k.n - 1);
         final Point origin  = new Point(new Point(0, 0));
-
-        k.atlas.put(origin, 0);
         Deque<Point> queue = new ArrayDeque<>(List.of(origin));
-        alreadyVisited.add(origin);
+        Set<Point> alreadyVisited = new HashSet<>(List.of(origin));
+        k.atlas.put(origin, 0);
 
         do {
             Point current = queue.remove();
@@ -58,50 +58,63 @@ class Result {
                 queue.removeAll(alreadyVisited);
             }
         } while (!queue.isEmpty());
-
         return -1;
     }
 }
-
-/* Knight moving in (dx, dy) fashion on chessboard. */
-class Knight{
+/*
+ * Knight moving in (dx, dy) fashion on chessboard.
+ * The knight keeps an 'odometer' of the minimum moves
+ * to reach a given square.
+ */
+class Knight {
     Map<Point, Integer> atlas = new ConcurrentHashMap<>();
-    int dx; int dy; int n;
+    final int x; final int y; final int n;
     Knight(int x, int y, int n) {
-        dx = x;
-        dy = y;
+        this.x = x;
+        this.y = y;
         this.n = n;
     }
-    Set<Integer> homolog() {
-        if(dx == dy)
-            return Set.of(dx);
-        return Set.of(dx, dy);
+    /* Enumerate all positions reachable by this Knight */
+    public List<Point> neighborsOf(Point p) {
+        return Direction.all()
+                .flatMap(d -> travel(p, d))
+                .filter(this::isValid)
+                .toList();
     }
-   public List<Point> neighborsOf(Point p) {
-        return Stream.of(
-                point(p, dx, dy),
-                point(p, -dx, dy),
-                point(p, dx, -dy),
-                point(p, -dx, -dy),
-                point(p, dy, dx),
-                point(p, -dy, dx),
-                point(p, dy, -dx),
-                point(p, -dy, -dx))
-        .filter(this::isValid).collect(toList());
+    private Stream<Point> travel(Point p, Direction d) {
+        return Stream.of(pointOf(p, d, x, y), pointOf(p, d, y, x));
     }
-    private boolean isValid(Point p) {
-         return p.y < n && p.x < n && p.y >= 0 && p.x >= 0;
-    }
-    private Point point(Point s, int dx, int dy) {
-        Point q = s.getLocation();
-        q.translate(dx, dy);
-        atlas.merge(q, atlas.get(s) + 1, Math::min); //prolly putIfAbsent would suffice.
+    private Point pointOf(Point p, Direction sign, int dx, int dy) {
+        Point q = p.getLocation();
+        q.translate(dx * sign.dx, dy * sign.dy);
+        atlas.merge(q, atlas.get(p) + 1, Math::min); //prolly putIfAbsent would suffice.
         return q;
     }
-
+    /* Represent the cardinal directions */
+    private enum Direction {
+        U(1,1),
+        D(-1,-1),
+        L(-1, 1),
+        R(1, -1);
+        final int dx; final int dy;
+        private Direction(int dx, int dy) {
+            this.dx = dx;
+            this.dy = dy;
+        }
+        static Stream<Direction> all() {
+            return Arrays.stream(Direction.values());
+        }
+    }
+    private boolean isValid(Point p) {
+        return p.y < n && p.x < n && p.y >= 0 && p.x >= 0;
+    }
+    Set<Integer> homolog() {
+        if(x == y)
+            return Set.of(x);
+        return Set.of(x, y);
+    }
 }
 
-/* HackerRank boilerplate */
 public class Solution {
     public static void main(String[] args) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
