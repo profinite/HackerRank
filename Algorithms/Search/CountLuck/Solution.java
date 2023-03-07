@@ -66,19 +66,16 @@ class Result {
             return new ArrayList<>(List.of(graph.get(current)));
         }
         visited.add(current);
-        List<Cell> path = graph.get(current).neighbors
+        Optional<List<Cell>> path = graph.get(current).neighbors
                 .stream()
                 .parallel()
                 .filter(not(visited::contains))
                 .map(p -> findPath(p, graph, visited))
                 .filter(not(List::isEmpty))
-                .findFirst()
-                .orElse(List.of());
-        if(!path.isEmpty())
-            path.add(0, graph.get(current));
-        return path;
+                .findFirst();
+        path.ifPresent(p -> p.add(0, graph.get(current)));
+        return path.orElse(List.of());
     }
-
 }
 
 
