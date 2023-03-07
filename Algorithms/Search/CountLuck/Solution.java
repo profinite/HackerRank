@@ -110,7 +110,7 @@ class Cell {
     }
     
     /* Check if a given point of the matrix is unblocked, aka open. */
-    static public boolean isOpen(Point p, final List<String> matrix) {
+    public static boolean isOpen(Point p, final List<String> matrix) {
         final char blocked = 'X';
         final char goal = '*';
         final char start = 'M';
