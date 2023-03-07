@@ -29,7 +29,7 @@ class Result {
      * 𝚯(N) space complexity for the overall search.
      */
     public static String countLuck(List<String> matrix, int k) {
-        long junctions = findPath(graphOf(matrix)
+        long junctions = findPath(graphOf(matrix))
                 .parallelStream()
                 .filter(Cell::isJunction)
                 .count();
