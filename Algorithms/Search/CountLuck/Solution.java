@@ -14,11 +14,8 @@ class Result {
      * decision points (we'll call them "junctions")
      * https://www.hackerrank.com/challenges/count-luck
      *
-     * Note: A basic implementation problem, just need to
-     * define "junction" appropriately for the terminal
-     * points.
-     *
-     * Note internally we use Cartesian coordinates (x, y)
+     * Note: Take care to define "junction" appropriately for the
+     * terminal points. Internally, uses Cartesian coordinates (x, y)
      * to represent the matrix.
      *
      * As a learning experiment, implemented as a 'parallelized'
@@ -32,8 +29,7 @@ class Result {
      * 𝚯(N) space complexity for the overall search.
      */
     public static String countLuck(List<String> matrix, int k) {
-        final Map<Point, Cell> graph = createGraph(matrix);
-        long junctions = findPath(graph)
+        long junctions = findPath(graphOf(matrix)
                 .parallelStream()
                 .filter(Cell::isJunction)
                 .count();
@@ -45,7 +41,7 @@ class Result {
 
     /* Create an undirected graph of the matrix, with open cells only.
      * Note the final cells are unblocked (open), but not necessarily reachable. */
-    private static Map<Point, Cell> createGraph(final List<String> matrix) {
+    private static Map<Point, Cell> graphOf(List<String> matrix) {
         final int x = matrix.get(0).length();
         final int y = matrix.size();
         return Cell.matrixOf(x, y)
@@ -55,7 +51,7 @@ class Result {
     }
 
     /* Initial recursive depth-first search (DFS) for the "port key"
-     * As used here, "visited" is thread-safe (but not otherwise). */
+     * As used here, "visited" is thread-safe, but not generally. */
     private static List<Cell> findPath(Map<Point, Cell> graph) {
         return findPath(Cell.start, graph, new HashSet<>());
     }
@@ -81,7 +77,7 @@ class Result {
 
 
 /* Cell of a matrix, with neighbors in the cardinal directions (N, S, E, W).
- * Note this commandeers 'Point' from an otherwise-unrelated library. */
+ * Note this commandeers 'Point' from the graphics library. */
 class Cell {
     final Set<Point> neighbors;
     private final Point position;
@@ -95,7 +91,7 @@ class Cell {
         neighbors = neighborsOf().filter(n -> isOpen(n, matrix)).collect(toSet());
     }
 
-    /* A "junction" is a cell with more than one option, in a viable path to the goal.
+    /* A "junction" is any cell with more than one option, in a viable path to the goal.
      * The goal itself is never a junction. A cell with two or more
      * non-source neighbors is always a junction. */
     public boolean isJunction() {
@@ -113,7 +109,7 @@ class Cell {
                 IntStream.range(0, width).mapToObj(x -> new Point(x, y))).flatMap(p -> p);
     }
     
-    /* Check if a given point of the matrix is unblocked (open) */
+    /* Check if a given point of the matrix is unblocked, aka open. */
     static public boolean isOpen(Point p, final List<String> matrix) {
         final char blocked = 'X';
         final char goal = '*';
@@ -126,7 +122,7 @@ class Cell {
         }
         return (terrain != blocked);
     }
-    /* Show all positions reachable from this Cell */
+    /* Show all valid positions reachable from this Cell */
     private Stream<Point> neighborsOf() {
         return Direction.all().parallel().map(this::pointOf).filter(this::isValid);
     }
@@ -142,8 +138,8 @@ class Cell {
     private enum Direction {
         N(0, 1),
         S(0, -1),
-        W(-1, 0),
-        E(1, 0);
+        E(1, 0),
+        W(-1, 0);        
         private final int dx, dy;
         Direction(int dx, int dy) {
             this.dx = dx, dy;
