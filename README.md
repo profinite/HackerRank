@@ -7,6 +7,7 @@ Under my analysis, every algorithm has at least quasi-polynomial runtime complex
 
 Space complexity is usually a secondary consideration: instead we focus on lucidity, often defining classes or data structures to more cogently illustrate the solution, or even investigate a rarely-used collection class. As an exercise, many solutions are also adapted specifically for **parallelization**, introducing streams and additional memory use. In practice, this usually only yields benefits around 8+ threads - comment out parallel() when running on the hackerrrank.com crucible.
 
+Generally every file is left as-is once committed and passing, to capture my (highly imperfect) understanding of syntax.
 
 (c)2022 Tyler C de Laguna <tyler@delaguna.org>
 
