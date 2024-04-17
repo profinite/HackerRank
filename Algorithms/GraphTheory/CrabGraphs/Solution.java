@@ -87,7 +87,7 @@ class Node {
     }
 }
 
-public class Main {
+public class Solution {
     public static void main(String[] args) throws IOException {
         Path inputFile = Paths.get("/tmp/input.txt");
         BufferedReader bufferedReader = Files.newBufferedReader(inputFile);
