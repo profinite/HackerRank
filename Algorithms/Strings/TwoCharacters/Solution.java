@@ -19,6 +19,8 @@ class Result {
      * Simple in theory, but the need to filter out doublets before
      * and after each term makes it truly huge and byzantine. Needs refactoring.
      *
+     * FIXME: simplify
+     *
      * 0(n) runtime
      * 0(m * n) memory complexity, where m is the alphabet of the string.
      *
