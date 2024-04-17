@@ -9,5 +9,10 @@ Space complexity is usually a secondary consideration: instead we focus on lucid
 
 Generally every file is left as-is once committed and passing, to capture my (highly imperfect) understanding of syntax for future comparison.
 
+- [x] Upload _Data Structures_ solutions
+- [x] Upload Medium Algorithm answers
+- [ ] Finish the Hard Algorithm problems 
+- [ ] Finish the Euler Project problems
+
 (c)2022 Tyler C de Laguna <tyler@delaguna.org>
 
