@@ -1,0 +1,43 @@
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.IntStream;
+
+class Result {
+
+    /*
+     * Simulate a battling game:
+     * https://www.hackerrank.com/challenges/mandragora/problem
+     * 
+     * Applies sliding window to precompute battling every round
+     * then step through building health. Rests on assumption
+     * that it's best to build health only on low-experience opponents.
+     *
+     * 𝚯(n log n) runtime
+     */
+     public static long mandragora(List<Integer> H) {
+        Collections.sort(H);
+        long battles = H.stream().mapToLong(Long::valueOf).sum();
+        long max = 0;
+        for (int i = 0; i < H.size(); battles -= H.get(i), i++) {
+            int health = i + 1;
+            long experience = health * battles;
+            if (experience < max) return max;
+            max = experience;
+        }
+        return max;
+    }
+     public static long mandragor2a(List<Integer> H) {
+        final int n = H.size();
+        Collections.sort(H);
+        return IntStream.range(0, n).parallel().mapToLong(i -> (long)H.subList(i, n).stream().mapToLong(Long::valueOf).reduce(0L, Long::sum) * ++i).max().orElseThrow();
+    }
+    public static long mandragora2(List<Integer> H) {
+        final int n = H.size();
+        Collections.sort(H);
+        return IntStream.range(0, n).mapToLong(i -> (long) H.subList(i, n).stream().reduce(0, Integer::sum) * ++i).max().orElseThrow();
+
+    }
+
+}
