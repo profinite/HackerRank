@@ -9,7 +9,7 @@ import static java.util.stream.Collectors.*;
 
 class Result {
 
-    /*
+    /**
      * Find the longest possible substring of 's', if limited to any two characters,
      * and the terms alternate perfectly.
      * https://www.hackerrank.com/challenges/two-characters/
