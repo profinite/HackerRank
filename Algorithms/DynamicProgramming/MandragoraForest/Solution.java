@@ -9,12 +9,15 @@ class Result {
     /*
      * Simulate a battling game:
      * https://www.hackerrank.com/challenges/mandragora/problem
+     *
+     * Excellent problem! ⭐⭐⭐⭐⭐
+     * Good 30min interview question.
      * 
      * Applies sliding window to precompute battling every round
      * then step through building health. Rests on assumption
-     * that it's best to build health only on low-experience opponents.
+     * that best to build health only on low-experience opponents.
      *
-     * 𝚯(n log n) runtime
+     * 𝚯(N log N) runtime for N opponents due to sort
      */
      public static long mandragora(List<Integer> H) {
         Collections.sort(H);
