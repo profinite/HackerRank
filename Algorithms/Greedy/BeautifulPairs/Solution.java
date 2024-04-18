@@ -12,8 +12,8 @@ class Result {
  * A pair of indices  is beautiful if the  element of array  is equal to the  element of array.
  * https://www.hackerrank.com/challenges/beautiful-pairs/problem
  * 
- * Fairly straightforward... good implementation problem though 
- * builds a histogram of each element, then counts the
+ * Fairly straightforward... good implementation problem. ⭐⭐⭐
+ * Builds a histogram of each element, then counts the
  * the number of prospective pairs, with tolerance for one change.
  */
 
