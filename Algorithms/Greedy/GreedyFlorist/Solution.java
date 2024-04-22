@@ -6,8 +6,8 @@ import java.util.stream.IntStream;
 
 public class Main {
     /**
-     * Minimize cost given 'k' buyers and 'c' prices of items, where
-     * costs multiply for prior buyers.
+     * Minimize cost given 'k' buyers and 'c' prices of items where
+     * costs multiply for prior buyers
      * https://www.hackerrank.com/challenges/greedy-florist/problem
      *
      * Key observations:
@@ -17,25 +17,29 @@ public class Main {
      * 𝚯(n log n) for n prices
      *
      * @param k number of buyers
-     * @param c unsorted list of prices
+     * @param prices unsorted list of prices
      * @return optimal cost
      */
-    static int getMinimumCost(int k, List<Integer> c) {
-        final int ROUNDS = (int) Math.ceil((double) c.size() / k);
-        Collections.sort(c);
-        Collections.reverse(c);
-        return IntStream.range(0, ROUNDS).map(r -> costOf(r, k, c)).reduce(0, Integer::sum);
+    static int getMinimumCost(int k, List<Integer> prices) {
+        final int ROUNDS = divideUp(prices.size(), k);
+        prices.sort(Comparator.reverseOrder());
+        return IntStream.range(0, ROUNDS).map(r -> costOf(r, k, prices)).sum();
     }
 
-    /* Compute the cost for this round, given k buyers */
+    /** 
+     * @param round - current buying cycle
+     * @param k - total buyers per round
+     * @return cost for this round
+     */
     private static int costOf(int round, int k, List<Integer> prices) {
         int start = round * k;
-        int end = Math.min(start + k, prices.size());
+        int end = Math.min(start + k, prices.size()); // account for last round
         return ++round * prices.subList(start, end).stream().reduce(0, Integer::sum);
     }
-
-
-  
+    private static int divideUp(int x, int y) {
+       return (int) Math.ceil((double) x / y);
+    }
+    
     
     /* HackerRank Boilerplate. */
     private static final Scanner scanner = new Scanner(System.in);
