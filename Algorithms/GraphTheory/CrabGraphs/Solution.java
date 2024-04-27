@@ -53,7 +53,7 @@ class Result {
     }
 
     /* Crude typedef (controversial) */
-    public static final class Graph extends HashMap<Integer, Node> {};
+    static final class Graph extends HashMap<Integer, Node> {};
 
 }
 
