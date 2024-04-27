@@ -49,8 +49,6 @@ class Node {
 
 public class Solution {
 
-    public static class Graph extends HashMap<Integer, Node> {};
-
     Set<Edge> route = new HashSet<>();
     static int jeanisRoute(int[] k, int[][] roads) {
         return new Main().findRoute(k, roads);
@@ -147,7 +145,7 @@ public class Solution {
         graph.get(x).edges.remove(e);
         graph.get(y).edges.remove(e);
     }
-
+    private final static class Graph extends HashMap<Integer, Node> {};
 
     private static final Scanner scanner;
 
