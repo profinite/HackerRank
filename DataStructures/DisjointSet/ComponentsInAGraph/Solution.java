@@ -22,9 +22,9 @@ class Result {
             .stream()
             .filter(n -> !n.isVisited)
             .map(Node::size)
-            .collect(Collectors.toCollection(LinkedList::new));
+            .toList();
             
-        return Stream.of(Collections.min(sizes), Collections.max(sizes)).collect(toList());
+        return List.of(Collections.min(sizes), Collections.max(sizes));
     }
     
     /* Represent the adjacency pairs as a graph of Nodes
