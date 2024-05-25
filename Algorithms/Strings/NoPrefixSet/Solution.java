@@ -24,12 +24,14 @@ class Result {
        for (String word : words) {
             if (sorted.containsKey(word)) // check for identical
                 min = Math.min(min, index);
-            sorted.putIfAbsent(word, index++); // sort the strings
+            sorted.putIfAbsent(word, index); // sort the strings
+            index++;
         }
         for (String word : words.stream().distinct().toList()) {
             String next = sorted.higherKey(word);
             while (isPrefix(word, next)) {
-                min = Math.min(min, Math.max(sorted.get(word), sorted.get(next)));
+                int last = Math.max(sorted.get(word), sorted.get(next));
+                min = Math.min(min, last);
                 next = sorted.higherKey(next);
             }
         }
