@@ -28,7 +28,7 @@ class Result {
             if(atlas.get(index))
                 continue;
             int furthest = atlas.floorKey(index + k);
-            atlas.subMap(index, furthest + k + 1).replaceAll((a, b) -> true);
+            atlas.subMap(index, ++furthest + k).replaceAll((a, b) -> true);
             count++;
         }
         return count;
