@@ -77,7 +77,7 @@ class Factorial {
 
 /**
  * Segment tree to represent a sparse histogram of a string.
- *  Character -> (left index -> right index), 1-based
+ *  Character -> (left index -> prefix sum), 1-based
  * -------------------------------
  * Example: panaman is represented as:
  *      p -> (0 -> 0)
