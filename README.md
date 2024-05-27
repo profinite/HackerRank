@@ -15,4 +15,4 @@ Generally every file is left as-is once committed and passing, to capture my (hi
 - [ ] Finish the Euler Project problems
 
 (c)2022 Tyler C de Laguna <tyler@delaguna.org>
-
+All Rights Reserved
