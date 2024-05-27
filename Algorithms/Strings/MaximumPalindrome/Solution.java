@@ -24,7 +24,8 @@ class Result {
     static SegmentTree tree; // concurrent-safe for this usage
     static Factorial factorials = new Factorial();
     final static int MODULUS = 1_000_000_007;
-    /* Precompute a Segment Tree of the string. */
+    /* Precompute a Segment Tree of the string. 
+     * https://en.wikipedia.org/wiki/Segment_tree */
     public static void initialize(String s) {
         tree = new SegmentTree(s);
     }
@@ -74,9 +75,18 @@ class Factorial {
     }   
 }
 
-/* Segment tree to represent a sparse histogram. */
+/**
+ * Segment tree to represent a sparse histogram of a string.
+ *  Character -> (left index -> right index), 1-based
+ * -------------------------------
+ * Example: panaman is represented as:
+ *      p -> (0 -> 0)
+ *      a -> (1 -> 1, 3 -> 2, 4 -> 3)
+ *      n -> (2 -> 1, 6 -> 2)
+ *      m -> (5 -> 1)
+ * -------------------------------
+ */
 class SegmentTree {
-    static final class Segment extends TreeMap<Integer, Long> { { this.put(0, 0L); } };
     Map<Character, Segment> counts = new HashMap<>();
     public SegmentTree(String s) {
         int index = 1;
@@ -86,6 +96,7 @@ class SegmentTree {
             index++;
         }
     }
+    /** Get a histogram of total character frequency, from start to end index, 1-based. */    
     public List<Long> interval(int start, int end) {
         return counts.values()
                 .stream()
@@ -96,6 +107,9 @@ class SegmentTree {
         long diff = arr.floorEntry(end).getValue() - arr.floorEntry(--start).getValue();
         return Math.max(0, diff);
     }
+    /** Segment is Map<index, frequency>
+     *  where frequency = counts up to a given index, from left to right) */
+    static final class Segment extends TreeMap<Integer, Long> { { this.put(0, 0L); } };    
 }
 
 
