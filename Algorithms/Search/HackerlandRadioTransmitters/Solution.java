@@ -33,22 +33,6 @@ class Result {
         }
         return count;
     }
-
-    public static int hackerlandRadioTransmitters2(List<Integer> x, int k) {
-        // standard sliding window I guess...
-        Collections.sort(x);
-        int count = 0;
-        int firstHouse = -1;
-        System.err.println(x);
-        for(Integer index : x) {
-            if(firstHouse == -1 || index > firstHouse + 2 * k) {
-                firstHouse = index;
-                count++;
-            }
-        }
-        return count;
-    }
-
 }
 
 public class Main {
