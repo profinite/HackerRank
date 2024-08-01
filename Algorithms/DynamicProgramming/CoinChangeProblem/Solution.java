@@ -36,6 +36,7 @@ class Result {
             
         long sum = LongStream.iterate(n, i -> i - current)
             .takeWhile(i -> i >= 0)
+            .unordered()
             .parallel()
             .map(i -> i == 0 ? 1 : getWays(i, next))
             .sum(); 
