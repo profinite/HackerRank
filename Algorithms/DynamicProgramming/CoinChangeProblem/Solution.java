@@ -20,35 +20,44 @@ import static java.util.stream.Collectors.toList;
  * 𝚯(|N| * |M| / P) runtime, for P processors, and M coin options.
  */
 class Result {
-    private static Map<Point, Long> memo = new ConcurrentHashMap<>();
+    private static final Map<Exchange, Long> memo = new ConcurrentHashMap<>();
     private static List<Long> coins;
+
     public static long getWays(int n, List<Long> c) {
-        c.sort(Comparator.reverseOrder()); // optional
-        coins = c; 
+        c.sort(Comparator.reverseOrder()); // optional for clarity
+        coins = c;
         return getWays(n, 0);
     }
+
+    /**
+     * Recursively count potential coin exchanges.
+     *
+     * @param n summand to exchange with coins
+     * @param start index into the coin list
+     * @return total of combinations to exchange
+     */
     private static long getWays(long n, int start) {
-        Point p = new Point((int)n, start); // in lieu of Record 
-        Long m = memo.get(p);
-        if(m != null) return m;
-        
+        var x = new Exchange(n, start); // in lieu of Record
+        Long m = memo.get(x);
+        if (m != null) return m;
+
         long current = coins.get(start);
         int next = start + 1;
-        if(next == coins.size())  // base case is the last coin
+        if (next == coins.size())  // base case is the last coin
             return n % current == 0 ? 1 : 0;
 
         // otherwise, pursue the recurrence relation
         long sum = LongStream.iterate(n, i -> i - current)
-            .takeWhile(i -> i >= 0)
-            .unordered()
-            .parallel() // concurrency experiment
-            .map(i -> i == 0 ? 1 : getWays(i, next))
-            .sum();
+                .takeWhile(i -> i >= 0)
+                .unordered()
+                .parallel() // concurrency experiment
+                .map(i -> i == 0 ? 1 : getWays(i, next))
+                .sum();
         // store the result as a future subcomputation
-        return memo.computeIfAbsent(p, k -> sum);
+        return memo.computeIfAbsent(x, k -> sum);
     }
+    record Exchange(long summand, int index) { }
 }
-
 
 
 // HackerRank Boilerplate
