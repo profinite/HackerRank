@@ -6,15 +6,18 @@ import java.awt.Point;
 import static java.util.stream.Collectors.toList;
 
 /**
- * The old standard "make monetary change" problem
+ * The classic "make monetary change" problem.
  * https://www.hackerrank.com/challenges/coin-change/problem
  *
- * Straightforward memoization, although
- * here we parallelize the recursive calls for potential
- * 𝚯(n * m / p) runtime, for P processors, and list of length M.
+ * Straightforward memoization with a classic interview problem ⭐⭐
+ * For something different, here we parallelize the recursive calls.  
+ * In practice, .parallel() only seems to help starting at N > 300,000+
  *
- * Space is also conserved by using a map rather
- * than polluting the heap with a mostly-empty array.
+ * Here we also opt to memoize using a hashmap. This avoids polluting 
+ * the heap with a mostly-empty array. The sparsity of the memo will
+ * correspond roughly to how easily divisible the target sum is.
+ *
+ * 𝚯(|N| * |M| / P) runtime, for P processors, and M coin options.
  */
 class Result {
     private static Map<Point, Long> memo = new ConcurrentHashMap<>();
@@ -31,15 +34,17 @@ class Result {
         
         long current = coins.get(start);
         int next = start + 1;
-        if(next == coins.size())  // base case = last coin       
+        if(next == coins.size())  // base case is the last coin
             return n % current == 0 ? 1 : 0;
-            
+
+        // otherwise, pursue the recurrence relation
         long sum = LongStream.iterate(n, i -> i - current)
             .takeWhile(i -> i >= 0)
             .unordered()
-            .parallel()
+            .parallel() // concurrency experiment
             .map(i -> i == 0 ? 1 : getWays(i, next))
-            .sum(); 
+            .sum();
+        // store the result as a future subcomputation
         return memo.computeIfAbsent(p, k -> sum);
     }
 }
