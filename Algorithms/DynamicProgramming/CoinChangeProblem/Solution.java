@@ -37,7 +37,7 @@ class Result {
      * @return total of combinations to exchange
      */
     private static long getWays(long n, int start) {
-        var x = new Exchange(n, start); // in lieu of Record
+        var x = new Exchange(n, start);
         Long m = memo.get(x);
         if (m != null) return m;
 
