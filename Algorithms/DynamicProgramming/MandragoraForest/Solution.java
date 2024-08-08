@@ -31,11 +31,13 @@ class Result {
         }
         return max;
     }
-     public static long mandragor2a(List<Integer> H) {
+    /* Alternative brute-force solution, albeit parallelized. */
+     public static long mandragora2(List<Integer> H) {
         final int n = H.size();
         Collections.sort(H);
         return IntStream.range(0, n).parallel().mapToLong(i -> (long)H.subList(i, n).stream().mapToLong(Long::valueOf).reduce(0L, Long::sum) * ++i).max().orElseThrow();
     }
+    /* More experimentation with the alternative. */
     public static long mandragora2(List<Integer> H) {
         final int n = H.size();
         Collections.sort(H);
