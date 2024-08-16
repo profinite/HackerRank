@@ -19,6 +19,9 @@ class Result {
      *
      * So I just search for the maximum, taking the given maximum or minimum (1).
      * It's easy to memoize which makes it more tractable.
+     * 
+     *  𝚯(N) for list of length N, with memoization
+     *  𝚯(N) space complexity for the memos
      *
      * @param B  maxima of the potential series
      * @return maximum difference sum
