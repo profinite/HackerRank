@@ -14,18 +14,22 @@ class Result {
      * removing exactly one cloud.
      * https://www.hackerrank.com/challenges/cloudy-day/
      *
-     * Fairly simple implementation problem.
+     * Fairly simple implementation problem! Good interview question ⭐⭐⭐
+     *
      * 1) Represent each town's location in a Binary Search Tree or Skiplist.
      *  If towns share a location, simply treat them as combined.
      *
      * 2) For each cloud, assign towns within range to it:
-     *  Town Location -> Cloud
+     *         M: Town Location -> Cloud
      * Important: remove any towns already covered by this cloud. This keeps
      * the algorithm runtime linear.
      *
      * 3) Now for each town, group their populations by the cloud that covers them.
      *
-     * 4) Sum the largest group with the uncovered "SUNNY" towns
+     * 4) Sum the largest group with the uncovered towns ("NONE")
+     *
+     * 𝚯(M + N log N) runtime for M clouds and N towns.
+     * 𝚯(M + N) space complexity
      *
      * @param p - town populations
      * @param x - town locations
@@ -34,7 +38,7 @@ class Result {
      * @return sum of people in a sunny town after maximal cloud is removed
      */
     public static long maximumPeople(List<Long> p, List<Long> x, List<Long> y, List<Long> r) {
-        final Cloud NONE = new Cloud(0, 0, -1L);
+        final Cloud NONE = new Cloud(0, 0, -1L); // represents uncovered towns
         // 1) Town -> Cloud
         ConcurrentSkipListMap<Long, Cloud> cover = rangeOf(x.size())
                 .collect(Collectors.toMap(x::get, a -> NONE, (a, b) -> a, ConcurrentSkipListMap::new));
