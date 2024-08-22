@@ -38,22 +38,25 @@ class Result {
      * @return sum of people in a sunny town after maximal cloud is removed
      */
     public static long maximumPeople(List<Long> p, List<Long> x, List<Long> y, List<Long> r) {
-        final Cloud NONE = new Cloud(0, 0, -1L); // represents uncovered towns
+        final Cloud NONE = new Cloud(0, 0, -1L);
         // 1) Town -> Cloud
         ConcurrentSkipListMap<Long, Cloud> cover = rangeOf(x.size())
+                .parallel()
                 .collect(Collectors.toMap(x::get, a -> NONE, (a, b) -> a, ConcurrentSkipListMap::new));
 
         // 2) for each cloud, assign any virgin towns to it. Remove those already covered.
-        for (Cloud c : rangeOf(y.size()).map(i -> new Cloud(y.get(i), r.get(i), i)).toList()) {
-            cover.subMap(c.start(), c.end()).forEach((a, b) -> {
-                if (b == NONE) cover.put(a, c);
-                else cover.remove(a);
-            });
-        }
+        rangeOf(y.size()).map(i -> new Cloud(y.get(i), r.get(i), i))
+                .parallel()
+                .forEach(c ->
+                    cover.subMap(c.start(), c.end()).forEach((a, b) -> {
+                        if (b == NONE) cover.put(a, c);
+                        else cover.remove(a);
+                    }));
 
         // Sum the populations for each cloud.
         Map<Long, Long> popByLocation = rangeOf(x.size()).collect(Collectors.toMap(x::get, p::get, Long::sum));
         Map<Cloud, Long> popByCloud = cover.entrySet().stream()
+                .parallel()
                 .collect(Collectors.groupingByConcurrent(
                     Map.Entry::getValue,
                     Collectors.summingLong(e -> popByLocation.get(e.getKey())))
@@ -74,12 +77,12 @@ class Result {
     }
     // helper function for a parallel stream
     private static Stream<Integer> rangeOf(int n) {
-        return IntStream.range(0, n).parallel().boxed();
+        return IntStream.range(0, n).boxed();
     }
 
 
     // For pre-Records java versions
-    public static long maximumPeople2(List<Long> p, List<Long> x, List<Long> y, List<Long> r) {
+    public static long maximumPeopleJava15(List<Long> p, List<Long> x, List<Long> y, List<Long> r) {
         final long SUNNY = -1L;
         ConcurrentSkipListMap<Long, Long> cover = rangeOf(x.size())
                 .collect(Collectors.toMap(x::get, a -> SUNNY, (a, b) -> a, ConcurrentSkipListMap::new));
@@ -98,7 +101,7 @@ class Result {
 }
 
 
-public class Solution {
+public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream("/tmp/input.txt")));
 
